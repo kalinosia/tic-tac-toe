@@ -180,21 +180,21 @@ def minimax(board):
     The move returned should be the optimal action (i, j) that is one of the allowable actions on the board. If multiple moves are equally optimal, any of those moves is acceptable.
     If the board is a terminal board, the minimax function should return None.
     '''
-    def max_value(board2):
-        if terminal(board2):
-            return utility(board2)
-        value2 = -math.inf
-        for action2 in actions(board2):
-            value2 = max(value2, min_value(result(board2, action2)))
-        return value2
+    def max_value(state):
+        v = -math.inf
+        if terminal(state):
+            return utility(state)
+        for actione in actions(state):
+            v = max(v, min_value(result(state, actione)))
+        return v
 
-    def min_value(board2):
-        if terminal(board2):
-            return utility(board2)
-        value2 = math.inf
-        for action2 in actions(board2):
-            value2 = min(value2, max_value(result(board2, action2)))
-        return value2
+    def min_value(state):
+        v = +math.inf
+        if terminal(state):
+            return utility(state)
+        for actione in actions(state):
+            v = min(v, max_value(result(state, actione)))
+        return v
 
     def print_board(board):
         for row in board:
@@ -206,19 +206,9 @@ def minimax(board):
             print()
         print()
     '''
-    function minimax(node, depth, maximizingPlayer) is
-        if depth = 0 or node is a terminal node then
-            return the heuristic value of node
-        if maximizingPlayer then
-            value := −∞
-            for each child of node do
-                value := max(value, minimax(child, depth − 1, FALSE))
-            return value
-        else (* minimizing player *)
-            value := +∞
-            for each child of node do
-                value := min(value, minimax(child, depth − 1, TRUE))
-            return value
+Given a state s
+    The maximizing player picks action a in Actions(s) that produces the highest value of Min-Value(Result(s, a)).
+    The minimizing player picks action a in Actions(s) that produces the lowest value of Max-Value(Result(s, a)).
     '''
 
     if len(actions(board))>=8: #if first move - random move
@@ -226,47 +216,23 @@ def minimax(board):
         returning_one_random_tuple = from_Set_to_list[random.randint(0, len(actions(board)) - 1)]
         return returning_one_random_tuple
 
-    panel = copy.deepcopy(board)
+    panel = copy.deepcopy(board) #  necessary?probably not
 
-    #    print("returned none from minimax")
-    #    print(utility(board2))
-    #best_move=(0,0)
-
+    scores=[]
     if player(board) == X:
-        value_base = -math.inf
-        for action in actions(board):
-            value=max_value(result(panel, action))
-            if value>value_base:
-                value_base=value
-                best_move=action
-    else:
-        value_base = +math.inf
         for action in actions(board):
             value=min_value(result(panel, action))
-            if value < value_base:
-                value_base = value
-                best_move = action
-    return best_move
+            scores.append((value,action))#####
+    else:
+        for action in actions(board):
+            value=max_value(result(panel, action))
+            scores.append((value, action))
+
+    if player(board) == X:
+        return max(scores)[1]
+    else:
+        return min(scores)[1]
 
 
 
-'''
-    for action in actions(panel):
-        while True:
-            if terminal(result(panel,action)):
-                if utility((result(panel,action)))==1:
-                    return action
-                else:
-                    break
-            else:
-                
-    
-    
-    print("end of minimax")
-    from_Set_to_list=list(actions(board))
 
-    returning_one_random_tuple=from_Set_to_list[random.randint(0, len(actions(board)) - 1)]
-    return  returning_one_random_tuple
-
-    #raise NotImplementedError
-    '''
